@@ -1592,13 +1592,13 @@
 <p>In <a href="https://github.com/TeamNCMC/cuisto/tree/main/scripts/qupath-utils/segmentation"><code>scripts/qupath-utils/segmentation</code></a>, there is <code>watershedDetectionFilters.groovy</code> which uses this feature from a script. It further allows you to filter out detected cells based on shape measurements as well as fluorescence intensity in several channels and cell compartments.</p>
 </div>
 <h3 id="manual-counting">Manual counting<a class="headerlink" href="#manual-counting" title="Permanent link">#</a></h3>
-<p>If you whish to do the counting manually, you have to follow a certain (Qu)path.</p>
-<p>First you have to select the point tool and start clicking on every cell you want to count. It will create an unique annotation composed of every points you've created. This detail is important because, in order to make you're quantification work on <code>cuisto</code>, you must have one Detection per cell and not one Annotation gathering all your cells. But don't worry too much ! There is a way to solve this tremendous issue. </p>
-<p>After manually clicking on every of your cells, you must classify your Annotation by clicking on "set selected". After that, you must split your Annotation by clicking left on it on the Analysis panel and click on edit single &gt; split. Now you've got one Annotation per cells. One less problem !  Then, you must convert you're Annotations toward Detections. To do so, there is a script in <a href="https://github.com/TeamNCMC/cuisto/tree/main/scripts/qupath-utils/tools/convertAnnotationsToDetections.groovy"><code>scripts/qupath-utils/tools/convertAnnotationsToDetections</code></a> that will nicely do it for you ! </p>
+<p>If you wish to do the counting manually, you have to follow a certain (Qu)path.</p>
+<p>First you have to select the point tool and start clicking on every cell you want to count. It will create an unique annotation composed of every points you've created. This detail is important because, in order to make your quantification work on <code>cuisto</code>, you must have one Detection per cell and not one Annotation gathering all your cells. But don't worry too much ! There is a way to solve this tremendous issue. </p>
+<p>After manually clicking on every of your cells, you must classify your Annotation by clicking on "set selected". After that, you must split your Annotation by clicking left on it on the Analysis panel and click on edit single &gt; split. Now you've got one Annotation per cells. One less problem !  Then, you must convert your Annotations to Detections. To do so, there is a script in <a href="https://github.com/TeamNCMC/cuisto/tree/main/scripts/qupath-utils/tools/convertAnnotationsToDetections.groovy"><code>scripts/qupath-utils/tools/convertAnnotationsToDetections</code></a> that will nicely do it for you ! </p>
 <p>I advise to first count every cells on your whole project, then split every Annotations on your whole project and finally use the script by selecting "Run for project". You'll win some seconds. </p>
 <div class="admonition tip">
 <p class="admonition-title">Tip</p>
-<p>Splitting Annotations on every image of your project means repeating the command every time. It may become slighty annoying. Here is your salvation : runPlugin('qupath.lib.plugins.objects.SplitAnnotationsPlugin', '{}') 
+<p>Splitting Annotations on every image of your project means repeating the command every time. It may become slighty annoying. Here is your salvation : 'runPlugin'('qupath.lib.plugins.objects.SplitAnnotationsPlugin', '{}') 
   It's a quick script that you may easily run for your whole project in Qupath. </p>
 </div>
 <p>Once you're done, remember to use the <code>cuisto</code> script <br />
@@ -1749,7 +1749,7 @@ Reference papers : <a href="https://doi.org/10.1101/2023.06.13.544786">doi:10.11
     <span class="md-icon" title="Last update">
       <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M21 13.1c-.1 0-.3.1-.4.2l-1 1 2.1 2.1 1-1c.2-.2.2-.6 0-.8l-1.3-1.3c-.1-.1-.2-.2-.4-.2m-1.9 1.8-6.1 6V23h2.1l6.1-6.1zM12.5 7v5.2l4 2.4-1 1L11 13V7zM11 21.9c-5.1-.5-9-4.8-9-9.9C2 6.5 6.5 2 12 2c5.3 0 9.6 4.1 10 9.3-.3-.1-.6-.2-1-.2s-.7.1-1 .2C19.6 7.2 16.2 4 12 4c-4.4 0-8 3.6-8 8 0 4.1 3.1 7.5 7.1 7.9l-.1.2z"/></svg>
     </span>
-    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">January 23, 2025</span>
+    <span class="git-revision-date-localized-plugin git-revision-date-localized-plugin-date">January 27, 2025</span>
   </span>
 
     
