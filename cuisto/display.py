@@ -12,7 +12,7 @@ import pandas as pd
 import seaborn as sns
 from matplotlib import patches
 
-from cuisto import utils
+from cuisto import atlas, utils
 
 
 def add_injection_patch(X: list, ax: plt.Axes, **kwargs) -> plt.Axes:
@@ -114,6 +114,7 @@ def draw_structure_outline(
     outline_file: str = "",
     ax: plt.Axes | None = None,
     microns: bool = False,
+    atlas: str | None = None,
     **kwargs,
 ) -> plt.Axes:
     """
@@ -133,6 +134,8 @@ def draw_structure_outline(
         Axes where to plot the outlines. If None, get current axes (the default).
     microns : bool, optional
         If False (default), converts the coordinates in mm.
+    atlas
+        Needs to be here to properly get kwargs for pyplot.plot()
     **kwargs : passed to pyplot.plot()
 
     Returns
@@ -185,6 +188,7 @@ def nice_bar_plot(
     nx: None | int = None,
     ordering: None | list[str] | str = None,
     names_list: None | list = None,
+    order_by_channel: str | None = None,
     hue_mirror: bool = False,
     log_scale: bool = False,
     bar_kws: dict = {},
@@ -216,6 +220,8 @@ def nice_bar_plot(
     names_list : list or None, optional
         List of names to display. If None (default), takes the most prominent overall
         ones.
+    order_by_channel : str or None, optional
+        If set, sort regions by the values of this channel only. Default is None.
     hue_mirror : bool, optional
         If there are 2 groups, plot in mirror. Default is False.
     log_scale : bool, optional
@@ -237,8 +243,12 @@ def nice_bar_plot(
         # prepare data
         # get nx first most prominent regions
         if not names_list:
+            if order_by_channel and "channel" in df.columns and order_by_channel in df["channel"].values:
+                df_for_sorting = df[df["channel"] == order_by_channel]
+            else:
+                df_for_sorting = df
             names_list_plt = (
-                df.groupby(["Name"])[yi].mean().sort_values(ascending=False).index[0:nx]
+                df_for_sorting.groupby(["Name"])[yi].mean().sort_values(ascending=False).index[0:nx]
             )
         else:
             names_list_plt = names_list
@@ -531,8 +541,25 @@ def nice_joint_plot(
     if not ax:
         ax = plt.gca()
 
-    # plot outline
-    draw_structure_outline(ax=ax, **outline_kws)
+    # plot outline if structures are specified
+    if outline_kws["structures"]:
+        file_not_found, filename = atlas.check_outlines_file(
+            outline_kws["outline_file"], outline_kws["atlas"]
+        )
+        # update filename if it fellback on the default one
+        outline_kws["outline_file"] = filename
+        if file_not_found:
+            msg = (
+                "[Info] The brain structure outlines file does not exist and could not "
+                "be downloaded, no outlines will be drawn.\n"
+                "You can generate it using cuisto.atlas.generate_outlines(), on a "
+                "computer with lots of RAM.\n"
+                "Alternatively, set 'outline_structures' to an empty list in the "
+                "configuration file."
+            )
+            print(msg)
+        else:
+            draw_structure_outline(ax=ax, **outline_kws)
 
     # plot joint distribution
     sns.histplot(
@@ -568,7 +595,7 @@ def nice_heatmap(
     **kwargs,
 ) -> list[plt.Axes] | plt.Axes:
     """
-    Nice plots of 2D distribution of boutons as a heatmap per animal.
+    Nice plots of 2D distribution of objects as a heatmap per animal.
 
     Parameters
     ----------
@@ -649,6 +676,9 @@ def plot_regions(df: pd.DataFrame, cfg, **kwargs):
         dodge=cfg.regions["display"]["dodge"],
         palette=palette,
     )
+
+    order_by_channel = cfg.regions["display"].get("order_by_channel", None)
+
     # draw
     figs = nice_bar_plot(
         dfplt,
@@ -659,6 +689,7 @@ def plot_regions(df: pd.DataFrame, cfg, **kwargs):
         orient=cfg.regions["display"]["orientation"],
         nx=cfg.regions["display"]["nregions"],
         ordering=regions_order,
+        order_by_channel=order_by_channel,
         hue_mirror=cfg.regions["hue_mirror"],
         log_scale=cfg.regions["display"]["log_scale"],
         bar_kws=bar_kws,
@@ -788,6 +819,7 @@ def plot_2D_distributions(df: pd.DataFrame, cfg):
         vmax=cfg.distributions["display"]["cmap_lim"][1],
     )
     outline_kws = dict(
+        atlas=cfg.atlas["name"],
         structures=cfg.atlas["outline_structures"],
         outline_file=cfg.files["outlines"],
         linewidth=1.5,
