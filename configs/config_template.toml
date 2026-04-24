@@ -73,6 +73,7 @@ normalize_starter_cells = false  # normalize non-relative metrics by the number 
 nregions = 18  # number of regions to display (sorted by max.)
 orientation = "h"  # orientation of the bars ("h" or "v")
 order = "max"  # order the regions by "ontology" or by "max". Set to "max" to provide a custom order
+order_by_channel = ""
 dodge = true  # enforce the bar not being stacked
 log_scale = false  # use log. scale for metrics
 [regions.display.metrics]  # name of metrics to display
